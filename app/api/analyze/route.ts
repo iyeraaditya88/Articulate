@@ -8,8 +8,11 @@ import {
 } from "@/lib/analysis/prompt";
 import type { SpeechAnalysis, TranscriptionResult } from "@/lib/analysis/types";
 import type { AudioMetrics } from "@/lib/audio/types";
-
-const DEFAULT_MODEL = "claude-sonnet-5";
+import {
+  logUsage,
+  resolveModels,
+  supportsEffort,
+} from "@/lib/analysis/modelConfig";
 
 export async function POST(req: Request) {
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -46,7 +49,7 @@ export async function POST(req: Request) {
   }
 
   const client = new Anthropic();
-  const model = process.env.ANALYSIS_MODEL ?? DEFAULT_MODEL;
+  const { analysisModel: model, effort } = resolveModels();
 
   try {
     // Stream + finalMessage: thinking tokens share the max_tokens budget, so
@@ -69,6 +72,7 @@ export async function POST(req: Request) {
         },
       ],
       output_config: {
+        ...(supportsEffort(model) ? { effort } : {}),
         format: {
           type: "json_schema",
           schema: ANALYSIS_SCHEMA as unknown as Record<string, unknown>,
@@ -76,6 +80,8 @@ export async function POST(req: Request) {
       },
       })
       .finalMessage();
+
+    const costUsd = logUsage("analyze", model, response.usage);
 
     if (response.stop_reason === "refusal") {
       return NextResponse.json(
@@ -99,7 +105,7 @@ export async function POST(req: Request) {
     }
     const raw = JSON.parse(text) as RawAnalysis;
     const analysis: SpeechAnalysis = toSpeechAnalysis(raw);
-    return NextResponse.json({ analysis, model: response.model });
+    return NextResponse.json({ analysis, model: response.model, costUsd });
   } catch (e) {
     if (e instanceof Anthropic.AuthenticationError) {
       return NextResponse.json(

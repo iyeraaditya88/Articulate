@@ -9,8 +9,11 @@ import {
 } from "@/lib/lessons/feedback";
 import type { TranscriptionResult } from "@/lib/analysis/types";
 import type { AudioMetrics } from "@/lib/audio/types";
-
-const DEFAULT_MODEL = "claude-sonnet-5";
+import {
+  logUsage,
+  resolveModels,
+  supportsEffort,
+} from "@/lib/analysis/modelConfig";
 
 export async function POST(req: Request) {
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -48,7 +51,7 @@ export async function POST(req: Request) {
   }
 
   const client = new Anthropic();
-  const model = process.env.ANALYSIS_MODEL ?? DEFAULT_MODEL;
+  const { lessonModel: model, effort } = resolveModels();
 
   try {
     // Stream + finalMessage: thinking tokens share the max_tokens budget.
@@ -75,6 +78,7 @@ export async function POST(req: Request) {
         },
       ],
       output_config: {
+        ...(supportsEffort(model) ? { effort } : {}),
         format: {
           type: "json_schema",
           schema: LESSON_FEEDBACK_SCHEMA as unknown as Record<string, unknown>,
@@ -82,6 +86,8 @@ export async function POST(req: Request) {
       },
       })
       .finalMessage();
+
+    logUsage("lesson-feedback", model, response.usage);
 
     if (response.stop_reason !== "end_turn") {
       return NextResponse.json(
