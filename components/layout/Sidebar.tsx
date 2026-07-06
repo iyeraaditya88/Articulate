@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -45,16 +46,14 @@ const NAV = [
 function Logo() {
   return (
     <div className="flex items-center gap-2.5">
-      <span className="grid size-9 place-items-center rounded-full bg-accent-soft text-accent">
-        <svg viewBox="0 0 20 20" fill="none" className="size-4.5" aria-hidden>
-          <path
-            d="M3 10h2.5M14.5 10H17M6.5 6.5v7M10 3.5v13M13.5 6.5v7"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-          />
-        </svg>
-      </span>
+      <Image
+        src="/logo.png"
+        alt="Articulate logo"
+        width={40}
+        height={34}
+        priority
+        className="h-[34px] w-auto drop-shadow-[0_2px_6px_rgba(70,160,200,0.35)]"
+      />
       <span className="font-display text-xl tracking-tight">Articulate</span>
     </div>
   );
