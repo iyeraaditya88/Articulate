@@ -22,13 +22,11 @@ export function toSpeechAnalysis(raw: RawAnalysis): SpeechAnalysis {
   const radar = Object.fromEntries(
     RADAR_KEYS.map((k) => {
       const item = raw.radar.find((r) => r.axis === k);
-      return [
-        k,
-        {
-          score: clamp(item?.score ?? 50),
-          comment: item?.comment ?? "",
-        },
-      ];
+      const score = clamp(item?.score ?? 50);
+      const targetItem = raw.radarTargets?.find((t) => t.axis === k);
+      // Ideal must sit at or above the current score to read sensibly.
+      const target = clamp(Math.max(targetItem?.target ?? 85, score));
+      return [k, { score, comment: item?.comment ?? "", target }];
     }),
   ) as unknown as SpeechAnalysis["radar"];
 

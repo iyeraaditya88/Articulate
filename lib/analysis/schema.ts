@@ -64,6 +64,7 @@ export interface RawAnalysis {
   headline: string;
   summary: string;
   radar: { axis: (typeof RADAR_KEYS)[number]; score: number; comment: string }[];
+  radarTargets: { axis: (typeof RADAR_KEYS)[number]; target: number }[];
   hail: {
     dimension: (typeof HAIL_KEYS)[number];
     grade: "A" | "B" | "C" | "D";
@@ -135,6 +136,7 @@ export const ANALYSIS_SCHEMA = {
     headline: str,
     summary: str,
     radar: enumArray("axis", RADAR_KEYS, { score: int, comment: str }),
+    radarTargets: enumArray("axis", RADAR_KEYS, { target: int }),
     hail: enumArray("dimension", HAIL_KEYS, {
       grade: { type: "string", enum: ["A", "B", "C", "D"] },
       comment: str,
@@ -176,6 +178,7 @@ export const ANALYSIS_SCHEMA = {
     "headline",
     "summary",
     "radar",
+    "radarTargets",
     "hail",
     "detectedSins",
     "vocalToolbox",

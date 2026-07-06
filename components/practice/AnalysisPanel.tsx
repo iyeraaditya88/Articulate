@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import type { SpeechAnalysis } from "@/lib/analysis/types";
 import {
+  DEFAULT_RADAR_TARGETS,
   RADAR_AXES,
   SIN_LABELS,
   VOICE_TYPE_LABELS,
@@ -98,11 +99,13 @@ function Section({
 function ScoredRow({
   label,
   score,
+  target,
   text,
   tip,
 }: {
   label: string;
   score: number;
+  target?: number;
   text: string;
   tip?: string;
 }) {
@@ -110,9 +113,23 @@ function ScoredRow({
     <li className="py-3 first:pt-0 last:pb-0">
       <div className="mb-1.5 flex items-baseline justify-between gap-3">
         <span className="text-[15px]">{label}</span>
-        <span className={`font-mono text-sm ${scoreTone(score)}`}>{score}</span>
+        <span className="font-mono text-sm">
+          <span className={scoreTone(score)}>{score}</span>
+          {target !== undefined && (
+            <span className="text-muted"> / {target}</span>
+          )}
+        </span>
       </div>
-      <Bar score={score} />
+      <div className="relative">
+        <Bar score={score} />
+        {target !== undefined && (
+          <span
+            className="absolute -top-0.5 h-2.5 w-0.5 rounded bg-ok/80"
+            style={{ left: `${Math.min(target, 100)}%` }}
+            aria-hidden
+          />
+        )}
+      </div>
       <p className="mt-2 text-[13px] leading-relaxed text-muted">
         {text}
         {tip && <span className="text-accent"> {tip}</span>}
@@ -126,6 +143,11 @@ export function AnalysisPanel({ analysis }: { analysis: SpeechAnalysis }) {
 
   const radarValues = RADAR_AXES.map((a) =>
     Math.round(analysis.radar[a.key].score),
+  );
+  const radarTargets = RADAR_AXES.map((a) =>
+    Math.round(
+      analysis.radar[a.key].target ?? DEFAULT_RADAR_TARGETS[a.key],
+    ),
   );
   const detectedSins = SIN_LABELS.filter((s) => analysis.sins[s.key].detected);
 
@@ -217,13 +239,29 @@ export function AnalysisPanel({ analysis }: { analysis: SpeechAnalysis }) {
           <RadarChart
             labels={RADAR_AXES.map((a) => a.label)}
             values={radarValues}
+            compareValues={radarTargets}
+            compareVariant="ideal"
           />
+          <p className="mt-1 flex items-center justify-center gap-4 text-xs text-muted">
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-0.5 w-5 rounded bg-accent" /> you
+              today
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-0 w-5 border-t-2 border-dashed"
+                style={{ borderColor: "var(--ok)" }}
+              />{" "}
+              ideal for your voice
+            </span>
+          </p>
           <ul className="mt-4 divide-y divide-line">
-            {RADAR_AXES.map((a) => (
+            {RADAR_AXES.map((a, i) => (
               <ScoredRow
                 key={a.key}
                 label={a.label}
                 score={Math.round(analysis.radar[a.key].score)}
+                target={radarTargets[i]}
                 text={analysis.radar[a.key].comment}
               />
             ))}

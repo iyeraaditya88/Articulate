@@ -4,8 +4,10 @@ interface RadarChartProps {
   labels: string[];
   /** 0–100 per axis, same order as labels */
   values: number[];
-  /** optional baseline series (rendered dimmer/dashed, e.g. "first session") */
+  /** optional second series (dashed), e.g. "first session" or "ideal" */
   compareValues?: number[];
+  /** muted = gray baseline (past self); ideal = green aspiration */
+  compareVariant?: "muted" | "ideal";
   size?: number;
 }
 
@@ -14,6 +16,7 @@ export function RadarChart({
   labels,
   values,
   compareValues,
+  compareVariant = "muted",
   size = 340,
 }: RadarChartProps) {
   const n = labels.length;
@@ -87,9 +90,10 @@ export function RadarChart({
       {comparePoints && (
         <polygon
           points={comparePoints}
-          fill="var(--muted)"
-          fillOpacity="0.07"
-          stroke="var(--muted)"
+          fill={compareVariant === "ideal" ? "var(--ok)" : "var(--muted)"}
+          fillOpacity={compareVariant === "ideal" ? 0.05 : 0.07}
+          stroke={compareVariant === "ideal" ? "var(--ok)" : "var(--muted)"}
+          strokeOpacity={compareVariant === "ideal" ? 0.8 : 1}
           strokeWidth="1.3"
           strokeDasharray="4 3"
           strokeLinejoin="round"

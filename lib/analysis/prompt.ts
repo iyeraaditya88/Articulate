@@ -26,6 +26,8 @@ The radar profile is the speaker's skill web — 8 axes, each 0-100:
 
 Scoring calibration: 50 = average untrained speaker, 70 = capable, 85+ = genuinely strong, below 35 = clear problem area. Use the full scale; do not cluster everything at 60-75. overallScore is a weighted judgment across the radar, not a mean of it.
 
+radarTargets: for each axis, the ideal score THIS speaker should aim for — a realistic picture of their voice at its best, not a flat 100. Typically 78-92: higher where their natural instrument gives them an edge (e.g. a resonant low voice can target higher projection), slightly lower where the axis matters less for their apparent context. Every target must be >= the current score on that axis.
+
 speakerType is a memorable two-or-three-word archetype ("The Steady Explainer", "The Rapid-Fire Enthusiast") that matches the evidence.
 
 Keep every comment specific to THIS recording — reference actual numbers or quotes. Comments 1-2 sentences; summary 3-5 sentences. recommendedLessons: exactly 3, each targeting one of the speaker's three weakest areas, with a concrete practice exercise in the description. All scores are integers 0-100.

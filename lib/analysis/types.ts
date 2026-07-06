@@ -24,17 +24,34 @@ export interface SinFinding {
   evidence: string;
 }
 
+export interface RadarAxisResult extends ScoredComment {
+  /** personalized ideal score for this speaker on this axis */
+  target?: number;
+}
+
 /** The 8 axes of the speaker-profile radar ("web graph"). */
 export interface RadarProfile {
-  vocalVariety: ScoredComment;
-  paceControl: ScoredComment;
-  pauseMastery: ScoredComment;
-  volumeProjection: ScoredComment;
-  clarityStructure: ScoredComment;
-  conciseness: ScoredComment;
-  engagement: ScoredComment;
-  connection: ScoredComment;
+  vocalVariety: RadarAxisResult;
+  paceControl: RadarAxisResult;
+  pauseMastery: RadarAxisResult;
+  volumeProjection: RadarAxisResult;
+  clarityStructure: RadarAxisResult;
+  conciseness: RadarAxisResult;
+  engagement: RadarAxisResult;
+  connection: RadarAxisResult;
 }
+
+/** Fallback ideal profile for analyses saved before targets existed. */
+export const DEFAULT_RADAR_TARGETS: Record<keyof RadarProfile, number> = {
+  vocalVariety: 85,
+  paceControl: 85,
+  pauseMastery: 80,
+  volumeProjection: 85,
+  clarityStructure: 88,
+  conciseness: 85,
+  engagement: 82,
+  connection: 88,
+};
 
 export const RADAR_AXES: { key: keyof RadarProfile; label: string }[] = [
   { key: "vocalVariety", label: "Vocal Variety" },
