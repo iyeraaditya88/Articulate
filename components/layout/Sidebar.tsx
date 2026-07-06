@@ -80,7 +80,7 @@ export function Sidebar() {
                 className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-[15px] transition-colors ${
                   active
                     ? "bg-accent-soft text-accent"
-                    : "text-muted hover:bg-surface-raised hover:text-foreground"
+                    : "text-foreground hover:bg-surface-raised hover:text-accent"
                 }`}
               >
                 {item.icon}
@@ -112,7 +112,7 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={`flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors ${
-                active ? "text-accent" : "text-muted"
+                active ? "text-accent" : "text-foreground"
               }`}
             >
               {item.icon}
