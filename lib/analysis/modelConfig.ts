@@ -3,6 +3,7 @@
 export interface ModelRouting {
   analysisModel: string;
   lessonModel: string;
+  interviewModel: string;
   effort: "low" | "medium" | "high";
 }
 
@@ -16,6 +17,9 @@ export function resolveModels(): ModelRouting {
   return {
     analysisModel: process.env.ANALYSIS_MODEL ?? "claude-sonnet-5",
     lessonModel: process.env.LESSON_MODEL ?? "claude-haiku-4-5",
+    // Interview coaching leans on nuanced judgment + answer rewriting —
+    // keep it on the analysis-quality tier.
+    interviewModel: process.env.INTERVIEW_MODEL ?? "claude-sonnet-5",
     effort,
   };
 }

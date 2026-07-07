@@ -32,6 +32,17 @@ const NAV = [
     ),
   },
   {
+    href: "/interview",
+    label: "Interview Practice",
+    shortLabel: "Interview",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" className="size-5" aria-hidden>
+        <rect x="3" y="6" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7.5 6V4.5A1.5 1.5 0 0 1 9 3h2a1.5 1.5 0 0 1 1.5 1.5V6M3 10.5h14" stroke="currentColor" strokeWidth="1.5" />
+      </svg>
+    ),
+  },
+  {
     href: "/progress",
     label: "Progress Tracker",
     shortLabel: "Progress",
